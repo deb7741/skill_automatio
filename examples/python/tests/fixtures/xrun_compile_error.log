@@ -1,0 +1,5 @@
+xrun(64): 23.09-s001
+	counter dut(.*);
+	      |
+xmelab: *E,CUVMUR (./tb/tb_counter.sv,15|6): instance 'tb_counter.dut' of design unit 'counter' is unresolved in 'worklib.tb_counter:sv'.
+xrun: *E,ELBERR: Error during elaboration (status 1), exiting.

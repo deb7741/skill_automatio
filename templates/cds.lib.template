@@ -1,0 +1,15 @@
+-- cds.lib template ----------------------------------------------------------
+-- Copy to your project directory as "cds.lib" and edit the paths.
+-- Lines starting with "--" are comments. Environment variables are expanded.
+
+-- Cadence generic libraries (shipped with Virtuoso; no PDK content)
+DEFINE analogLib  $CDSHOME/tools/dfII/etc/cdslib/artist/analogLib
+DEFINE basic      $CDSHOME/tools/dfII/etc/cdslib/basic
+DEFINE ahdlLib    $CDSHOME/tools/dfII/samples/artist/ahdlLib
+DEFINE functional $CDSHOME/tools/dfII/etc/cdslib/artist/functional
+
+-- Project / PDK libraries: keep these in a separate, private file
+SOFTINCLUDE ./cds.lib.project
+
+-- Personal scratch libraries
+DEFINE scratchLib ./libs/scratchLib

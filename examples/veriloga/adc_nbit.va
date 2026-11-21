@@ -1,0 +1,33 @@
+// adc_nbit.va : ideal clocked 4-bit ADC (samples on rising clock edge)
+// Output bits are electrical levels vlow/vhigh.
+`include "constants.vams"
+`include "disciplines.vams"
+
+module adc4(vin, clk, b3, b2, b1, b0);
+  input vin, clk; output b3, b2, b1, b0;
+  electrical vin, clk, b3, b2, b1, b0;
+
+  parameter real vref  = 1.0 from (0:inf);
+  parameter real vth   = 0.5;               // clock threshold
+  parameter real vhigh = 1.0;
+  parameter real vlow  = 0.0;
+  parameter real td    = 0.0 from [0:inf);
+  parameter real tr    = 100e-12 from (0:inf);
+
+  integer code;
+
+  analog begin
+    @(initial_step) code = 0;
+
+    @(cross(V(clk) - vth, +1)) begin
+      code = floor(V(vin) / vref * 16.0);
+      if (code > 15) code = 15;
+      if (code < 0)  code = 0;
+    end
+
+    V(b3) <+ transition(((code >> 3) & 1) ? vhigh : vlow, td, tr);
+    V(b2) <+ transition(((code >> 2) & 1) ? vhigh : vlow, td, tr);
+    V(b1) <+ transition(((code >> 1) & 1) ? vhigh : vlow, td, tr);
+    V(b0) <+ transition(( code       & 1) ? vhigh : vlow, td, tr);
+  end
+endmodule

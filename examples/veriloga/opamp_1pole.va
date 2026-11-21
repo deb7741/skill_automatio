@@ -1,0 +1,39 @@
+// opamp_1pole.va : single-pole opamp with output clamping and output resistance
+// Ports: inp, inn, out, vdd, vss
+//   gain : DC open-loop gain (V/V)
+//   gbw  : gain-bandwidth product (Hz) -> dominant pole at gbw/gain
+//   vmax/vmin : output swing limits (absolute volts, independent of vdd pin here;
+//               the supply pins exist so the symbol matches a real opamp)
+//   rout : output resistance (ohm)
+`include "constants.vams"
+`include "disciplines.vams"
+
+module opamp_1pole(inp, inn, out, vdd, vss);
+  input inp, inn; output out; inout vdd, vss;
+  electrical inp, inn, out, vdd, vss;
+  electrical nint;                         // internal (unclamped) node
+
+  parameter real gain = 1e4  from (0:inf);
+  parameter real gbw  = 10e6 from (0:inf);
+  parameter real vmax = 1.75;
+  parameter real vmin = 0.05 from (-inf:vmax);
+  parameter real rout = 50   from (0:inf);
+  parameter real voff = 0.0;               // input-referred offset
+
+  real vmid, vhalf, vclamp;
+
+  analog begin
+    vmid  = (vmax + vmin) / 2.0;
+    vhalf = (vmax - vmin) / 2.0;
+
+    // Dominant pole: H(s) = gain / (1 + s*gain/(2*pi*gbw)), referenced to vmid
+    V(nint) <+ vmid + laplace_nd(gain * (V(inp, inn) + voff),
+                                 {1.0}, {1.0, gain / (`M_TWO_PI * gbw)});
+
+    // Smooth clamp keeps derivatives continuous (good for convergence)
+    vclamp = vmid + vhalf * tanh((V(nint) - vmid) / vhalf);
+
+    // Thevenin output: ideal source behind rout
+    I(out) <+ (V(out) - vclamp) / rout;
+  end
+endmodule

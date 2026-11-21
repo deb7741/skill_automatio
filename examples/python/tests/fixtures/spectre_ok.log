@@ -1,0 +1,24 @@
+Cadence (R) Virtuoso (R) Spectre (R) Circuit Simulator
+Version 21.1.0.xxx 64bit -- 1 Jan 2026
+Command line:
+    spectre rc_lowpass.scs +escchars =log spectre.log -format psfascii -raw psf
+
+Reading file:  rc_lowpass.scs
+Circuit inventory:
+              nodes 2
+          capacitor 1
+           resistor 1
+            vsource 1
+
+WARNING (SPECTRE-16707): Only tran and ac analyses are supported in this example log.
+
+Notice from spectre during initial setup.
+    Multithreading is disabled.
+
+Transient Analysis `tran1': time = (0 s -> 40 us)
+Total time required for tran analysis `tran1': CPU = 12.5 ms, elapsed = 15.2 ms.
+
+AC Analysis `ac1': freq = (1 Hz -> 100 MHz)
+Total time required for ac analysis `ac1': CPU = 2 ms, elapsed = 3 ms.
+
+spectre completes with 0 errors, 1 warning, and 2 notices.

@@ -1,0 +1,42 @@
+;; =====================================================================
+;; 04_waveform_export.ocn : open EXISTING results (no re-simulation) and
+;; export waveforms and scalar measurements in several ways.
+;; Point vagPsf at any PSF directory, e.g. after running 01_basic_tran_ac.ocn
+;; =====================================================================
+
+vagPsf = "./sim/01_basic/psf"
+
+openResults(vagPsf)
+printf("Available results: %L\n" results())
+
+;; ---- 1. ocnPrint table with fixed step ---------------------------------
+selectResult('tran)
+ocnPrint(?output "./sim/tran_table.txt" ?numberNotation 'scientific
+         ?from 0 ?to 40u ?step 100n
+         v("in") v("out"))
+
+;; ---- 2. Raw vectors -> CSV (every simulator point) --------------------
+procedure(vagWaveToCsv(wave fileName xName yName)
+  let((xv yv n port)
+    xv = drGetWaveformXVec(wave)
+    yv = drGetWaveformYVec(wave)
+    n  = drVectorLength(xv)
+    port = outfile(fileName "w")
+    fprintf(port "%s,%s\n" xName yName)
+    for(k 0 n-1
+      fprintf(port "%.9e,%.9e\n" drGetElem(xv k) drGetElem(yv k)))
+    close(port)
+    n))
+
+printf("tran points written: %d\n"
+       vagWaveToCsv(v("out") "./sim/vout_tran.csv" "time_s" "vout_v"))
+
+;; ---- 3. AC magnitude in dB to CSV --------------------------------------
+selectResult('ac)
+printf("ac points written: %d\n"
+       vagWaveToCsv(dB20(v("out")) "./sim/vout_ac_db.csv" "freq_hz" "vout_db"))
+
+;; ---- 4. Scalars -----------------------------------------------------------
+printf("OCEAN_RESULT bw_hz=%g\n" bandwidth(v("out") 3 "low"))
+
+exit()

@@ -1,0 +1,30 @@
+;; =====================================================================
+;; 02_param_sweep.ocn : nested parametric analysis (rval x temp) with
+;; paramAnalysis/paramRun, results printed as a family to a text file.
+;; =====================================================================
+
+;; Batch control mode makes paramRun robust in non-interactive sessions.
+envSetVal("spectre.envOpts" "controlMode" 'string "batch")
+
+simulator('spectre)
+design("./netlist/rc_circuit.scs")
+resultsDir("./sim/02_param")
+
+analysis('ac ?start "1" ?stop "100M" ?dec "20")
+desVar("rval" 1k)
+desVar("cval" 1n)
+desVar("vdd"  1.0)
+temp(27)
+
+paramAnalysis("rval" ?values '(500 1000 2000 5000)
+    paramAnalysis("cval" ?values '(0.5n 1n 2n)))
+paramRun()
+
+selectResult('ac)
+vagBwFamily = bandwidth(v("out") 3 "low")
+
+;; ocnPrint understands families (one row per sweep point)
+ocnPrint(?output "./sim/02_param/bw_family.txt" ?numberNotation 'scientific vagBwFamily)
+printf("Wrote ./sim/02_param/bw_family.txt\n")
+
+exit()

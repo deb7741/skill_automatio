@@ -1,0 +1,6 @@
+{
+  "bw_hz":   {"min": "100k", "unit": "Hz"},
+  "gain_db": {"min": 40, "max": 60, "unit": "dB"},
+  "tr_s":    {"max": "2u", "unit": "s"},
+  "ivdd_a":  {"max": "1m", "unit": "A"}
+}

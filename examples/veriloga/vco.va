@@ -1,0 +1,28 @@
+// vco.va : sinusoidal VCO with phase integration and timestep control
+// f = fc + kvco * (V(vctrl) - vcm)
+`include "constants.vams"
+`include "disciplines.vams"
+
+module vco(vctrl, out);
+  input vctrl; output out;
+  electrical vctrl, out;
+
+  parameter real fc   = 100e6 from (0:inf);  // center frequency (Hz)
+  parameter real kvco = 50e6;                // Hz/V
+  parameter real vcm  = 0.5;                 // control voltage at fc
+  parameter real ampl = 0.5 from (0:inf);
+  parameter real voff = 0.5;
+  parameter integer npts = 32 from [8:inf);  // timesteps per period
+
+  real freq, phase;
+
+  analog begin
+    freq = fc + kvco * (V(vctrl) - vcm);
+    if (freq < 1.0) freq = 1.0;
+
+    phase = idtmod(freq, 0.0, 1.0);          // phase in cycles, wraps at 1
+    V(out) <+ voff + ampl * sin(`M_TWO_PI * phase);
+
+    $bound_step(1.0 / (npts * freq));
+  end
+endmodule

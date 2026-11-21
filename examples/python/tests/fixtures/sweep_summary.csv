@@ -1,0 +1,5 @@
+rval,cval,bw,status,runtime_s
+500,1n,318309.9,PASS,0.8
+1k,1n,159154.9,PASS,0.7
+2k,1n,79577.47,PASS,0.7
+5k,1n,31830.99,PASS,0.8

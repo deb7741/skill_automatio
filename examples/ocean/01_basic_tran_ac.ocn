@@ -1,0 +1,46 @@
+;; =====================================================================
+;; 01_basic_tran_ac.ocn : run the RC low-pass netlist through Ocean and
+;; measure bandwidth, rise time and final value.
+;; Run:  ./run_ocean.sh 01_basic_tran_ac.ocn
+;; Uses the circuit-only netlist in ./netlist, so no library or PDK is
+;; needed — only Virtuoso/Ocean + Spectre on PATH.
+;; Note: with a netlist-file design, signals are named as in the netlist
+;; ("out"); with a schematic design they are hierarchical ("/out").
+;; =====================================================================
+
+;; ---------- user settings ----------
+vagNetlist = "./netlist/rc_circuit.scs"
+vagSimDir  = "./sim/01_basic"
+
+;; ---------- setup ----------
+simulator('spectre)
+design(vagNetlist)
+resultsDir(vagSimDir)
+
+analysis('tran ?stop "40u" ?errpreset "moderate")
+analysis('ac   ?start "1" ?stop "100M" ?dec "20")
+desVar("rval" 1k)
+desVar("cval" 1n)
+desVar("vdd"  1.0)
+temp(27)
+
+;; ---------- run ----------
+run()
+
+;; ---------- measure ----------
+selectResult('ac)
+vagBw = bandwidth(v("out") 3 "low")
+
+selectResult('tran)
+vagTr   = riseTime(v("out") 0 nil 1.0 nil 10 90)
+vagVend = value(v("out") 10u)
+
+printf("\n==== RESULTS ====\n")
+printf("bw_hz   = %g   (expected ~159.15e3)\n" vagBw)
+printf("tr_s    = %g   (expected ~2.2*R*C = 2.2e-6)\n" vagTr)
+printf("v@10us  = %g\n" vagVend)
+
+;; machine-readable line for scripts/CI
+printf("OCEAN_RESULT bw_hz=%g tr_s=%g\n" vagBw vagTr)
+
+exit()

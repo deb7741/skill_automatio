@@ -1,0 +1,37 @@
+// meas_period.va : measurement "probe" that logs rising-edge times and periods
+// to a text file — handy for scripted post-processing without PSF parsing.
+// Usage: XM (sig) meas_period vth=0.5 filename="period.txt"
+`include "constants.vams"
+`include "disciplines.vams"
+
+module meas_period(sig);
+  input sig;
+  electrical sig;
+
+  parameter real vth = 0.5;
+  parameter string filename = "period.txt";
+
+  integer fd, n;
+  real tlast, tnow;
+
+  analog begin
+    @(initial_step) begin
+      fd = $fopen(filename, "w");
+      $fwrite(fd, "edge,time_s,period_s\n");
+      n = 0;
+      tlast = -1.0;
+    end
+
+    @(cross(V(sig) - vth, +1)) begin
+      tnow = $abstime;
+      if (tlast >= 0.0)
+        $fwrite(fd, "%d,%e,%e\n", n, tnow, tnow - tlast);
+      else
+        $fwrite(fd, "%d,%e,\n", n, tnow);
+      tlast = tnow;
+      n = n + 1;
+    end
+
+    @(final_step) $fclose(fd);
+  end
+endmodule

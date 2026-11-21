@@ -1,0 +1,13 @@
+// dac_rc.scs : analog block = Verilog-A 4-bit DAC -> RC filter -> comparator
+// Ports: b3 b2 b1 b0 (logic inputs, converted by L2E connect modules)
+//        out          (analog output)
+//        cmp          (comparator output, converted back by an E2L module)
+simulator lang=spectre
+
+subckt dac_rc (b3 b2 b1 b0 out cmp)
+    XDAC (b3 b2 b1 b0 vdac) dac4 vref=1.8 vth=0.9 tr=1n
+    R1   (vdac out) resistor r=10k
+    C1   (out 0)    capacitor c=1p
+    VTH  (vth 0)    vsource dc=0.9
+    XCMP (out vth cmp) comparator vhigh=1.8 vlow=0 hyst=20m tr=200p
+ends dac_rc

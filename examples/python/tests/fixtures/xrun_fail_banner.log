@@ -1,0 +1,5 @@
+xcelium> run
+xmsim: *E,ASRTST (./tb/tb_counter.sv,38): (time 105 NS) Assertion tb_counter.unmblk1 has failed
+t=105000 count=3 expected=4
+TEST FAILED (1 errors)
+Simulation complete via $finish(1) at time 2045 NS + 0

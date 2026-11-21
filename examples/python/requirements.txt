@@ -1,0 +1,7 @@
+# Core helpers in vautil/ need only the Python standard library (3.8+).
+# Optional extras:
+numpy>=1.21          # faster array math in your own post-processing
+matplotlib>=3.5      # plotting
+psf_utils>=1.5       # alternative PSF ASCII reader (by Ken Kundert)
+skillbridge>=1.6     # Python <-> running Virtuoso (needs a Virtuoso session)
+pytest>=7            # run the unit tests

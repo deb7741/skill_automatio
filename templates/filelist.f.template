@@ -1,0 +1,17 @@
+// filelist.f template for xrun
+// Options
+-sv
+-timescale 1ns/1ps
+-access +r
+// Include paths and defines
++incdir+./rtl
++incdir+./tb
++define+SIM
+// Libraries (behavioral only; never commit PDK/standard-cell models publicly)
+// -y ./lib +libext+.v+.sv
+// Sources (order: packages first)
+./tb/tb_pkg.sv
+./rtl/top.sv
+./tb/tb_top.sv
+// Top
+-top tb_top

@@ -1,0 +1,5 @@
+Cadence (R) Virtuoso (R) Spectre (R) Circuit Simulator
+Reading file:  broken.scs
+ERROR (SFE-23): "broken.scs" 12: The instance `R1' is referencing an undefined model or subcircuit, `resistr'. Either include the file containing the definition of `resistr', or define `resistr' before running the simulation.
+ERROR (SFE-1997): "broken.scs": Cannot run the simulation because syntax errors were found in the netlist.
+spectre terminated prematurely due to fatal error.

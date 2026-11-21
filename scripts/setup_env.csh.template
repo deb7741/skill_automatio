@@ -1,0 +1,34 @@
+#!/bin/csh
+# setup_env.csh.template : project environment for Cadence automation (tcsh/csh)
+# Copy to setup_env.csh, edit the PLACEHOLDER paths, then:  source setup_env.csh
+
+# ---------- install roots (PLACEHOLDERS) ----------
+setenv CDSHOME      /path/to/cadence/IC618
+setenv SPECTRE_HOME /path/to/cadence/SPECTRE211
+setenv XCELIUM_HOME /path/to/cadence/XCELIUM2309
+
+# ---------- PATH ----------
+set path = ( $CDSHOME/tools/bin $CDSHOME/tools/dfII/bin $path )
+set path = ( $SPECTRE_HOME/bin $path )
+set path = ( $XCELIUM_HOME/tools/bin $path )
+rehash
+
+# ---------- licenses (PLACEHOLDER) ----------
+setenv CDS_LIC_FILE 5280@license-server
+
+# ---------- Cadence behavior ----------
+setenv CDS_Netlisting_Mode Analog
+setenv CDS_LOAD_ENV CWDElseHome
+
+# ---------- this repo (PLACEHOLDER: set to your clone) ----------
+setenv VAG_REPO /path/to/skill_automatio
+setenv VAG_SKILL_DIR $VAG_REPO/examples/skill
+if ( $?PYTHONPATH ) then
+  setenv PYTHONPATH $VAG_REPO/examples/python:$PYTHONPATH
+else
+  setenv PYTHONPATH $VAG_REPO/examples/python
+endif
+
+echo "virtuoso: `which virtuoso`"
+echo "spectre : `which spectre`"
+echo "xrun    : `which xrun`"

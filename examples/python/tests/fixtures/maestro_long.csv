@@ -1,0 +1,4 @@
+Test,Output,Corner,Nominal,Spec
+myLib:rc_tb:1,bw,nom,159.15k,> 100k
+myLib:rc_tb:1,tr,nom,2.2u,< 3u
+myLib:rc_tb:1,bw,hot,95k,> 100k

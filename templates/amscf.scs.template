@@ -1,0 +1,22 @@
+// amscf.scs template: AMS control file for the single-step xrun flow
+// xrun -timescale 1ns/1ps <digital files> amscf.scs -iereport -spectre_args "+aps"
+simulator lang=spectre
+
+// ---- analog netlists & Verilog-A ----
+// ahdl_include "./models/my_block.va"
+include "./netlists/analog_top.scs"
+
+// ---- device models (from your PDK: keep out of public repos) ----
+// include "/path/to/models.scs" section=tt
+
+// ---- analog analysis & options ----
+tran1 tran stop=10u
+simOpts options reltol=1e-4 temp=27
+
+// ---- mixed-signal configuration ----
+amsd {
+    portmap subckt=analog_top autobus=yes
+    config  cell=analog_top use=spice
+    ie vsup=1.8
+    // scoped example: ie vsup=1.0 inst=tb.dut.core
+}

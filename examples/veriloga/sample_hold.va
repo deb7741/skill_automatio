@@ -1,0 +1,39 @@
+// sample_hold.va : ideal track-and-hold
+// mode = 0 : sample-and-hold (capture on rising clk edge, hold until next)
+// mode = 1 : track while clk high, hold while clk low
+`include "constants.vams"
+`include "disciplines.vams"
+
+module sample_hold(vin, clk, out);
+  input vin, clk; output out;
+  electrical vin, clk, out;
+
+  parameter real vth  = 0.5;
+  parameter integer mode = 0 from [0:1];
+  parameter real tr   = 10e-12 from (0:inf);
+
+  real held, trk, hs;
+  integer tracking;
+
+  analog begin
+    @(initial_step) begin
+      held = V(vin);
+      tracking = (V(clk) > vth) ? 1 : 0;
+    end
+
+    @(cross(V(clk) - vth, +1)) begin
+      held = V(vin);
+      tracking = 1;
+    end
+    @(cross(V(clk) - vth, -1)) begin
+      held = V(vin);
+      tracking = 0;
+    end
+
+    // Analog operators (transition) must run every timestep, so no if/else
+    // around them: blend track and hold paths with a smooth weight instead.
+    trk = transition((mode == 1 && tracking) ? 1.0 : 0.0, 0, tr);
+    hs  = transition(held, 0, tr);
+    V(out) <+ trk * V(vin) + (1.0 - trk) * hs;
+  end
+endmodule

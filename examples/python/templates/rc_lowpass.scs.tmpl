@@ -1,0 +1,18 @@
+// rc_lowpass.scs.tmpl : template for spectre_sweep.py
+// Placeholders (Python string.Template): ${rval} ${cval}
+// Use $$ for a literal dollar sign.
+simulator lang=spectre
+global 0
+
+parameters rval=${rval} cval=${cval} vdd=1.0
+
+V1 (in 0) vsource type=pulse val0=0 val1=vdd period=20u width=10u \
+              rise=1n fall=1n delay=1u mag=1
+R1 (in out) resistor  r=rval
+C1 (out 0)  capacitor c=cval
+
+simOpts options reltol=1e-4 temp=27 save=selected
+save in out
+
+tran1 tran stop=40u errpreset=moderate
+ac1   ac   start=1 stop=100M dec=20

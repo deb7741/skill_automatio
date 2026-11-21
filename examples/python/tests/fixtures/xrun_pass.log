@@ -1,0 +1,10 @@
+xrun(64): 23.09-s001: (c) Copyright 1995-2023 Cadence Design Systems, Inc.
+file: ./rtl/counter.sv
+	module worklib.counter:sv
+		errors: 0, warnings: 0
+xmelab: *W,DSEMEL: This SystemVerilog design will be simulated as per IEEE 1800-2009 SystemVerilog simulation semantics.
+xcelium> run
+Coverage: 100.0%
+TEST PASSED
+Simulation complete via $finish(1) at time 2045 NS + 0
+xcelium> exit

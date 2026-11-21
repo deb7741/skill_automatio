@@ -1,0 +1,23 @@
+// =====================================================================
+// rc_lowpass.scs : first-order RC low-pass, transient + AC
+// PDK-free example. Run:  ./run.sh   (or see command in run.sh)
+// Expected: f-3dB = 1/(2*pi*R*C) = 159.15 kHz for R=1k, C=1n
+// =====================================================================
+simulator lang=spectre
+global 0
+
+parameters rval=1k cval=1n vdd=1.0
+
+// Stimulus: pulse for transient, mag=1 for AC
+V1 (in 0) vsource type=pulse val0=0 val1=vdd period=20u width=10u \
+              rise=1n fall=1n delay=1u mag=1
+
+R1 (in out) resistor  r=rval
+C1 (out 0)  capacitor c=cval
+
+simOpts options reltol=1e-4 vabstol=1e-6 iabstol=1e-12 temp=27 \
+                save=selected
+save in out
+
+tran1 tran stop=40u errpreset=moderate
+ac1   ac   start=1 stop=100M dec=20

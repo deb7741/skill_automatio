@@ -1,0 +1,18 @@
+HEADER
+"PSFversion" "1.00"
+"simulator" "spectre"
+"analysis type" "dc"
+TYPE
+"V" FLOAT DOUBLE PROP(
+"key" "node"
+"units" "V"
+)
+"I" FLOAT DOUBLE PROP(
+"key" "branch"
+"units" "A"
+)
+VALUE
+"in" "V" 1.00000000000000e+00
+"out" "V" 5.00000000000000e-01
+"V1:p" "I" -5.00000000000000e-04
+END

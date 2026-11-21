@@ -1,0 +1,40 @@
+// =====================================================================
+// tb_models.scs : smoke test for every Verilog-A model in this folder.
+// ADC -> DAC round trip of a slow sine, VCO with period logger,
+// comparator with hysteresis, sample & hold.
+// Run: spectre tb_models.scs +escchars =log tb.log -format psfascii -raw psf
+// =====================================================================
+simulator lang=spectre
+global 0
+
+ahdl_include "comparator.va"
+ahdl_include "dac_nbit.va"
+ahdl_include "adc_nbit.va"
+ahdl_include "vco.va"
+ahdl_include "sample_hold.va"
+ahdl_include "meas_period.va"
+
+// Stimuli
+VSIN (vin 0)  vsource type=sine sinedc=0.5 ampl=0.45 freq=10k
+VCLK (clk 0)  vsource type=pulse val0=0 val1=1 period=1u width=0.5u rise=1n fall=1n
+VCTL (vctl 0) vsource type=pwl wave=[0 0.3 200u 0.7]
+
+// ADC -> DAC round trip
+XADC (vin clk b3 b2 b1 b0) adc4 vref=1.0
+XDAC (b3 b2 b1 b0 vdac)    dac4 vref=1.0
+
+// Comparator with 20 mV hysteresis against 0.5 V
+VREF (vref 0) vsource dc=0.5
+XCMP (vin vref cmp) comparator vhigh=1.0 vlow=0 hyst=20m
+
+// Sample & hold
+XSH (vin clk vsh) sample_hold mode=0
+
+// VCO + period logger
+XVCO (vctl vco_out) vco fc=10M kvco=10M vcm=0.5
+XMP  (vco_out) meas_period vth=0.5 filename="vco_period.txt"
+
+simOpts options reltol=1e-4 save=selected
+save vin vdac cmp vsh vco_out b3 b2 b1 b0
+
+tran1 tran stop=200u maxstep=50n errpreset=moderate

@@ -1,0 +1,49 @@
+;; =====================================================================
+;; 03_pvt_loop_csv.ocn : explicit SKILL loops over supply and temperature,
+;; one results directory per point, measurements collected into a CSV.
+;; Swap in modelFile() per corner for real PDK corners (kept out of repo).
+;; =====================================================================
+
+vagVdds  = '(0.9 1.0 1.1)
+vagTemps = '(-40 27 125)
+vagCsv   = "./sim/03_pvt/pvt_results.csv"
+
+;; Corner -> model section mapping (PLACEHOLDER: fill from your own PDK)
+;; vagModelFile = "/path/to/your/models.scs"
+;; vagCorners   = '("tt" "ss" "ff")
+
+simulator('spectre)
+design("./netlist/rc_circuit.scs")
+analysis('tran ?stop "40u")
+analysis('ac   ?start "1" ?stop "100M" ?dec "20")
+desVar("rval" 1k)
+desVar("cval" 1n)
+
+createDir("./sim")
+createDir("./sim/03_pvt")
+vagOut = outfile(vagCsv "w")
+fprintf(vagOut "vdd,temp,bw_hz,tr_s,vmax_v,status\n")
+
+foreach(vdd vagVdds
+  foreach(tc vagTemps
+    let((dir ok bw tr vmax)
+      dir = sprintf(nil "./sim/03_pvt/v%g_t%g" vdd tc)
+      resultsDir(dir)
+      desVar("vdd" vdd)
+      temp(tc)
+      ; modelFile(list(vagModelFile corner))   ; <- per-corner models here
+      ok = run()
+      if(ok then
+        selectResult('ac)
+        bw = bandwidth(v("out") 3 "low")
+        selectResult('tran)
+        tr   = riseTime(v("out") 0 nil vdd nil 10 90)
+        vmax = ymax(v("out"))
+        fprintf(vagOut "%g,%g,%g,%g,%g,OK\n" vdd tc bw tr vmax)
+      else
+        fprintf(vagOut "%g,%g,,,,SIM_FAILED\n" vdd tc))
+      printf("done vdd=%g temp=%g\n" vdd tc))))
+
+close(vagOut)
+printf("Wrote %s\n" vagCsv)
+exit()

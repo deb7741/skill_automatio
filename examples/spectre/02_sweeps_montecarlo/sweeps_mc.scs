@@ -1,0 +1,50 @@
+// =====================================================================
+// sweeps_mc.scs : parameter sweep, paramset "corners", temperature sweep
+//                 and a generic Monte Carlo — all PDK-free.
+// The statistics block varies plain netlist parameters, so you can learn
+// the montecarlo mechanics without any foundry statistical models.
+// =====================================================================
+simulator lang=spectre
+global 0
+
+parameters rval=1k cval=1n vdd=1.0 tcr=2e-3
+
+V1 (in 0)  vsource type=pulse val0=0 val1=vdd period=20u width=10u rise=1n fall=1n mag=1
+// Temperature-dependent resistor (tc1) so the temp sweep does something
+R1 (in out) resistor  r=rval tc1=tcr
+C1 (out 0)  capacitor c=cval
+
+simOpts options reltol=1e-4 temp=27 save=selected
+save out
+
+// --- 1. Sweep one parameter over a list --------------------------------
+swpR sweep param=rval values=[500 1k 2k 5k] {
+    acR ac start=1 stop=100M dec=20
+}
+
+// --- 2. Several parameters together, row by row (a "corner table") ----
+corners paramset {
+    vdd   temp
+    0.9   -40
+    1.0    27
+    1.1   125
+}
+swpC sweep paramset=corners {
+    trC tran stop=40u
+}
+
+// --- 3. Temperature sweep ---------------------------------------------
+swpT sweep param=temp values=[-40 0 27 85 125] {
+    acT ac start=1 stop=100M dec=20
+}
+
+// --- 4. Monte Carlo on generic parameters ------------------------------
+statistics {
+    process {
+        vary rval dist=gauss std=5  percent=yes
+        vary cval dist=gauss std=10 percent=yes
+    }
+}
+mc1 montecarlo numruns=50 seed=1234 variations=process savefamilyplots=yes {
+    acMC ac start=1 stop=100M dec=20
+}

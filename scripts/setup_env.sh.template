@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# setup_env.sh.template : project environment for Cadence automation (bash/zsh)
+# Copy to setup_env.sh, edit the PLACEHOLDER paths, then:  source setup_env.sh
+# Do NOT commit site-specific paths or license servers to a public repo.
+
+# ---------- install roots (PLACEHOLDERS) ----------
+export CDSHOME="${CDSHOME:-/path/to/cadence/IC618}"           # Virtuoso
+export SPECTRE_HOME="${SPECTRE_HOME:-/path/to/cadence/SPECTRE211}"
+export XCELIUM_HOME="${XCELIUM_HOME:-/path/to/cadence/XCELIUM2309}"
+
+# ---------- PATH (order matters if several releases exist) ----------
+export PATH="$CDSHOME/tools/bin:$CDSHOME/tools/dfII/bin:$PATH"
+export PATH="$SPECTRE_HOME/bin:$PATH"
+export PATH="$XCELIUM_HOME/tools/bin:$PATH"
+
+# ---------- licenses (PLACEHOLDER) ----------
+export CDS_LIC_FILE="${CDS_LIC_FILE:-5280@license-server}"
+
+# ---------- Cadence behavior ----------
+export CDS_Netlisting_Mode=Analog
+export CDS_LOAD_ENV=CWDElseHome
+
+# ---------- this repo ----------
+_here="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+export VAG_REPO="${VAG_REPO:-$(cd "$_here/.." && pwd)}"
+export VAG_SKILL_DIR="$VAG_REPO/examples/skill"
+export PYTHONPATH="$VAG_REPO/examples/python${PYTHONPATH:+:$PYTHONPATH}"
+
+# Optional: site module system instead of manual paths
+# module load cadence/IC618 cadence/SPECTRE211 cadence/XCELIUM2309
+
+echo "Cadence environment:"
+for t in virtuoso spectre xrun ocean; do
+  printf "  %-9s %s\n" "$t" "$(command -v "$t" || echo 'NOT FOUND')"
+done

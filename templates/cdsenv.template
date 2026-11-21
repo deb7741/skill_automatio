@@ -1,0 +1,7 @@
+; .cdsenv template ---------------------------------------------------------
+; Format:  tool[.partition]   variable   type   value
+; Find exact names with envGetVal("tool.partition" "var") in the CIW, or via
+; CIW -> Options -> Save Defaults. Values below are common, generic examples.
+
+asimenv.startup    projectDir     string   "./simulation"
+spectre.envOpts    controlMode    string   "batch"

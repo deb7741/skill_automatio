@@ -1,0 +1,27 @@
+// comparator.va : comparator with offset, hysteresis and finite output edges
+// Output goes to vhigh when V(inp,inn) > vth + hyst/2, to vlow when < vth - hyst/2
+`include "constants.vams"
+`include "disciplines.vams"
+
+module comparator(inp, inn, out);
+  input inp, inn; output out;
+  electrical inp, inn, out;
+
+  parameter real vhigh = 1.0;
+  parameter real vlow  = 0.0;
+  parameter real vth   = 0.0;              // input offset (V)
+  parameter real hyst  = 0.0 from [0:inf); // total hysteresis (V)
+  parameter real td    = 0.0 from [0:inf); // propagation delay (s)
+  parameter real tr    = 100e-12 from (0:inf);
+
+  integer state;
+
+  analog begin
+    @(initial_step) state = (V(inp, inn) > vth) ? 1 : 0;
+
+    @(cross(V(inp, inn) - (vth + hyst / 2.0), +1)) state = 1;
+    @(cross(V(inp, inn) - (vth - hyst / 2.0), -1)) state = 0;
+
+    V(out) <+ transition(state ? vhigh : vlow, td, tr);
+  end
+endmodule

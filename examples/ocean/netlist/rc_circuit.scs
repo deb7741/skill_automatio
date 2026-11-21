@@ -1,0 +1,11 @@
+// rc_circuit.scs : circuit-only netlist for Ocean (no parameters, no analyses).
+// Ocean adds analyses, options and design variables (desVar -> parameters)
+// itself, so this file must contain only the circuit. Design variables used:
+// rval, cval, vdd.
+simulator lang=spectre
+global 0
+
+V1 (in 0) vsource type=pulse val0=0 val1=vdd period=20u width=10u \
+              rise=1n fall=1n delay=1u mag=1
+R1 (in out) resistor  r=rval
+C1 (out 0)  capacitor c=cval

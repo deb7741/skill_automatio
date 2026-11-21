@@ -1,0 +1,30 @@
+// =====================================================================
+// tb_opamp.scs : non-inverting amplifier (gain 1+R2/R1 = 10) built from a
+// Verilog-A single-pole opamp. Shows ahdl_include, model parameters,
+// AC closed-loop response and a step response.
+// =====================================================================
+simulator lang=spectre
+global 0
+
+ahdl_include "../../veriloga/opamp_1pole.va"
+
+parameters vdd=1.8 vcm=0.9 r1=1k r2=9k
+
+VDD (vdd 0) vsource dc=vdd
+VIN (inp 0) vsource type=pulse val0=vcm val1=vcm+50m delay=1u rise=1n fall=1n \
+                width=5u period=10u dc=vcm mag=1
+VREF (ref 0) vsource dc=vcm
+
+// Feedback network around the reference (vcm) level
+R1 (fb ref) resistor r=r1
+R2 (out fb) resistor r=r2
+CL (out 0)  capacitor c=1p
+
+XOP (inp fb out vdd 0) opamp_1pole gain=1e4 gbw=10M vmax=1.75 vmin=0.05 rout=50
+
+simOpts options reltol=1e-4 temp=27 save=selected
+save inp fb out
+
+dcop  dc
+tran1 tran stop=10u errpreset=moderate
+ac1   ac start=1 stop=1G dec=20

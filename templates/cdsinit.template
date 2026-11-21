@@ -1,0 +1,20 @@
+;; .cdsinit template ------------------------------------------------------------
+;; Keep this file small and load project code from a known location.
+
+printf("\n*** loading .cdsinit from %s ***\n" getWorkingDir())
+
+;; --- 1. project SKILL (set VAG_SKILL_DIR in your setup script) -------------
+let((dir)
+  dir = getShellEnvVar("VAG_SKILL_DIR")
+  when(dir && isDir(dir)
+    foreach(f '("lib_utils.il" "design_checks.il" "maestro_batch.il" "ciw_helpers.il")
+      when(isFile(strcat(dir "/" f)) loadi(strcat(dir "/" f))))))
+
+;; --- 2. useful environment defaults ---------------------------------------
+;; Where ADE puts simulation data (fast local or project scratch disk)
+envSetVal("asimenv.startup" "projectDir" 'string "./simulation")
+
+;; --- 3. personal overrides last --------------------------------------------
+when(isFile("~/.cdsinit.personal") loadi("~/.cdsinit.personal"))
+
+printf("*** .cdsinit done ***\n")

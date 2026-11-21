@@ -1,0 +1,27 @@
+// amscf.scs : AMS control file for the single-step xrun flow
+// Contains: analog netlist + models + analog analysis/options + amsd block.
+simulator lang=spectre
+
+// ---- analog design ----
+ahdl_include "../../veriloga/dac_nbit.va"
+ahdl_include "../../veriloga/comparator.va"
+include "./dac_rc.scs"
+// include "/path/to/your/models.scs" section=tt   // PDK models: NOT in this repo
+
+// ---- analog analysis & options ----
+// Transient must cover the whole digital run (16 codes x 400 ns + margin)
+tran1 tran stop=7u
+simOpts options reltol=1e-4 temp=27
+// Analog waveform saving: the testbench reads "out" with $cds_get_analog_value,
+// so no save is required for pass/fail. To view analog nets, add a save
+// statement using your release's hierarchical naming, or probe them from Tcl.
+
+// ---- mixed-signal configuration ----
+amsd {
+    // map SystemVerilog port names onto subckt ports by name
+    portmap subckt=dac_rc autobus=yes
+    // bind the SV instance of module "dac_rc" to the Spectre subckt
+    config  cell=dac_rc use=spice
+    // built-in connect modules: 1.8 V logic levels/thresholds
+    ie vsup=1.8
+}

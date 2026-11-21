@@ -1,0 +1,11 @@
+{
+  "workdir": ".",
+  "common_args": ["-f", "files.f", "-access", "+r"],
+  "tests": [
+    {"name": "smoke",      "args": ["-svseed", "1"],                     "tags": ["smoke"]},
+    {"name": "seed2",      "args": ["-svseed", "2"]},
+    {"name": "seed3",      "args": ["-svseed", "3"]},
+    {"name": "long_run",   "args": ["-svseed", "4", "+CYCLES=5000"],     "timeout": 600},
+    {"name": "random_seed","args": ["-svseed", "random"]}
+  ]
+}

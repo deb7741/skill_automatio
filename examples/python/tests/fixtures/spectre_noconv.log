@@ -1,0 +1,4 @@
+Transient Analysis `tran1': time = (0 s -> 1 us)
+ERROR (SPECTRE-16192): No convergence achieved with the minimum time step specified.
+Error found by spectre during transient analysis `tran1'.
+spectre completes with 1 error, 0 warnings, and 0 notices.

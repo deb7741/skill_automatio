@@ -1,0 +1,113 @@
+# ---- Cadence / Virtuoso session junk ----
+CDS.log*
+CDS.log.cdslck*
+*.cdslck
+*.cdslck.*
+panic*.log
+.cadence/
+.cdsinit.local
+libManager.log*
+.lmLog
+*.oa-
+*.oa.bak
+*.cdb-
+*~
+.skillide*
+.abstract.options
+
+# ---- Simulation outputs ----
+simulation/
+psf/
+*.raw/
+*.psf
+*.log
+*.out
+*.ahdlSimDB/
+*.ahdlcmi/
+ahdlSimDB/
+.ahdl_include/
+*.tran
+*.ac
+*.dc
+*.noise
+*.srf
+*.fc
+input.ppd
+spectre.ic
+spectre.fc
+*.mt0
+*.ms0
+*.mc0
+netlist/
+!examples/**/netlist/
+
+# ---- Xcelium / AMS ----
+xcelium.d/
+INCA_libs/
+xrun.history
+xrun.key
+waves.shm/
+*.shm/
+*.trn
+*.dsn
+*.vcd
+*.fsdb
+cov_work/
+imc.log
+.simvision/
+.bpad/
+AMS/
+amsd*.log
+
+# ---- Maestro / ADE results (keep setups, drop results) ----
+results/
+*.csv
+!examples/python/tests/fixtures/*.csv
+!templates/*.csv
+
+# ---- Python ----
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+*.pickle
+.psf_utils*
+
+# ---- Editors / OS ----
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# ---- keep test fixtures and example inputs ----
+!examples/python/tests/fixtures/
+!examples/python/tests/fixtures/**
+
+# psf_utils cache files
+*.cache
+
+# ---- PRIVATE: your filled-in copies of templates (license servers, install
+# ---- paths, project libraries). These must never be committed.
+setup_env.sh
+setup_env.csh
+scripts/setup_env.sh
+scripts/setup_env.csh
+/cds.lib
+cds.lib.project
+cds.lib.local
+.cdsinit
+.cdsinit.personal
+.cdsinit.local
+.cdsenv
+.simrc
+si.env
+!templates/si.env.template
+.env
+*.env.local
+*.pem
+*.key
+id_rsa*
+license*.dat
+*.lic

@@ -1,0 +1,29 @@
+// dac_nbit.va : ideal 4-bit binary-weighted DAC with logic-threshold inputs
+// Inputs are electrical; a bit is '1' when V(bit) > vth.
+// out = vref * code / (2^4 - 1). Edges smoothed with transition().
+// For other widths, copy and change NBITS + the port list (Verilog-A has
+// no generate for ports).
+`include "constants.vams"
+`include "disciplines.vams"
+
+module dac4(b3, b2, b1, b0, out);
+  input b3, b2, b1, b0; output out;
+  electrical b3, b2, b1, b0, out;
+
+  parameter real vref = 1.0;
+  parameter real vth  = 0.5;
+  parameter real tr   = 1e-9 from (0:inf);
+
+  integer code;
+
+  analog begin
+    // Re-evaluate exactly at each input threshold crossing
+    @(cross(V(b3) - vth, 0) or cross(V(b2) - vth, 0) or
+      cross(V(b1) - vth, 0) or cross(V(b0) - vth, 0)) ;
+
+    code = ((V(b3) > vth) ? 8 : 0) + ((V(b2) > vth) ? 4 : 0) +
+           ((V(b1) > vth) ? 2 : 0) + ((V(b0) > vth) ? 1 : 0);
+
+    V(out) <+ transition(vref * code / 15.0, 0, tr);
+  end
+endmodule

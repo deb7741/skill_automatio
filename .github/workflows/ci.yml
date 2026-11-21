@@ -1,0 +1,37 @@
+# Public CI runs only the tool-independent checks.
+# Cadence tools need licensed, self-hosted machines: see docs/12-regression-ci-batch.md
+name: ci
+
+on:
+  push:
+  pull_request:
+
+# least privilege: CI only needs to read the code
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: No PDK / foundry / private-data content
+        run: python tools/check_no_pdk.py .
+
+      - name: Python unit tests
+        working-directory: examples/python
+        run: |
+          pip install pytest
+          pytest -q
+
+      - name: Python syntax (all scripts)
+        run: python -m compileall -q examples/python tools
+
+      - name: Shell scripts
+        run: |
+          shellcheck scripts/*.sh examples/*/run*.sh examples/*/*/run.sh
